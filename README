@@ -1,0 +1,15 @@
+README for this project.
+
+Build:
+
+plugins can be installed locally by using "$HOME" as prefix:
+
+  $ meson --prefix="$HOME" build/
+  $ ninja -C build/ install
+
+Usage:
+
+./tools/gstaudiobuff2csv.sh <DEBUG_LEVEL>
+  DEBUG_LEVEL : GST_DEBUG level
+
+
