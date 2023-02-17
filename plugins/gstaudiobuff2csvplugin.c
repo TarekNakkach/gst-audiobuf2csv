@@ -8,17 +8,10 @@
 static gboolean
 plugin_init (GstPlugin * plugin)
 {
-
-  /* FIXME Remember to set the rank if it's an element that is meant
-     to be autoplugged by decodebin. */
   return gst_element_register (plugin, "audiobuff2csv", GST_RANK_NONE,
       GST_TYPE_AUDIOBUFF2CSV);
 }
 
-/* FIXME: these are normally defined by the GStreamer build system.
-   If you are creating an element to be included in gst-plugins-*,
-   remove these, as they're always defined.  Otherwise, edit as
-   appropriate for your external plugin package. */
 #ifndef VERSION
 #define VERSION "0.0.1"
 #endif

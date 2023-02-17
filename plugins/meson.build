@@ -1,6 +1,5 @@
 lib_args = common_args + []
 
-# sources used to compile this plug-in
 plugin_sources = [
   'gstaudiobuff2csvplugin.c',
   'gstaudiobuff2csv.c',
@@ -17,7 +16,6 @@ shlib = shared_library('gstaudiobuff2csv',
   install_dir : plugins_install_dir,
 )
 
-# Make this library usable as a Meson subproject.
 gst_audiobuff2csv_dep = declare_dependency(
   include_directories: include_directories('.'),
   link_with : shlib)

@@ -1,1 +1,9 @@
-Put your changelog here.
+TODO : Create new SRC Caps for text/x-csv format to avoid overriding output data
+
+Feb 17, 2023 - Override audio output data by audio info :
+	- Clean up audio output data when filter transform
+	- Write audio info instead of output data
+
+Feb 16, 2023 - Initial commit :
+	- Create new gst plugin based on GstAudioFilter
+	- Parse audio input buffer to extract audio info : TIMESTAMP, RATE, CHANNELS, N_SAMPLES

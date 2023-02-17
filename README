@@ -1,14 +1,18 @@
-README for this project.
-
-Build:
+Build :
 
 plugins can be installed locally by using "$HOME" as prefix:
 
   $ meson --prefix="$HOME" build/
   $ ninja -C build/ install
 
-Usage:
+Usage :
 
 ./tools/gstaudiobuff2csv.sh <OUTPUT_FILE_PATH.csv> <NUMBER_OF_BUFFERS> <GST_DEBUG_LEVEL (0 or empty to disable debug)>
 
+Dependency :
 
+- gstreamer-1.0 >= 1.0.0
+- gstreamer-base-1.0 >= 1.0.0
+- gstreamer-audio-1.0 >= 1.0.0
+
+ChangeLog : for more details about development steps

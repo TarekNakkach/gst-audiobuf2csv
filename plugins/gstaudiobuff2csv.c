@@ -64,8 +64,6 @@ gst_audiobuff2csv_class_init (GstAudiobuff2csvClass * klass)
       GST_BASE_TRANSFORM_CLASS (klass);
   GstAudioFilterClass *audio_filter_class = GST_AUDIO_FILTER_CLASS (klass);
 
-  /* Setting up pads and setting metadata should be moved to
-     base_class_init if you intend to subclass this class. */
   gst_element_class_add_static_pad_template (GST_ELEMENT_CLASS (klass),
       &gst_audiobuff2csv_src_template);
   gst_element_class_add_static_pad_template (GST_ELEMENT_CLASS (klass),
@@ -152,7 +150,7 @@ gst_audiobuff2csv_transform (GstBaseTransform * trans, GstBuffer * inbuf,
   GstAudiobuff2csv *audiobuff2csv = GST_AUDIOBUFF2CSV (trans);
   GST_DEBUG_OBJECT (audiobuff2csv, "transform");
   
-  /* Mapping of GstBuffer to GstGstAudioBuffer */
+  /* Mapping of GstBuffer to GstAudioBuffer */
   GstAudioBuffer audiobuffer;  
   gst_audio_buffer_map(&audiobuffer, audiobuff2csv->audioinfo, inbuf, GST_MAP_READWRITE);
 
@@ -167,9 +165,9 @@ gst_audiobuff2csv_transform (GstBaseTransform * trans, GstBuffer * inbuf,
 
   GstMapInfo mapout;
   gst_buffer_map (outbuf, &mapout, GST_MAP_WRITE);
-  /* clean up the output audio data and put the new data isntead */
+  /* clean up the output audio data and put the new data instead */
   memset (mapout.data, 0x00, mapout.size);
-  snprintf((char*)mapout.data, mapout.size, "timestamp=%d, rate=%d, channels=%d, n_samples=%ld \n", timestamp, rate, channels, n_samples);
+  snprintf((char*)mapout.data, mapout.size, "TIMESTAMP=%d, RATE=%d, CHANNELS=%d, N_SAMPLES=%ld \n", timestamp, rate, channels, n_samples);
   gst_buffer_unmap (inbuf, &mapout);
 
   return GST_FLOW_OK;
