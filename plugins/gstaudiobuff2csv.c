@@ -2,6 +2,7 @@
 #include "config.h"
 #endif
 
+#include <stdio.h>
 #include <gst/gst.h>
 #include <gst/audio/gstaudiofilter.h>
 #include "gstaudiobuff2csv.h"
@@ -10,7 +11,6 @@ GST_DEBUG_CATEGORY_STATIC (gst_audiobuff2csv_debug_category);
 #define GST_CAT_DEFAULT gst_audiobuff2csv_debug_category
 
 /* prototypes */
-
 
 static void gst_audiobuff2csv_set_property (GObject * object,
     guint property_id, const GValue * value, GParamSpec * pspec);
@@ -37,8 +37,7 @@ static GstStaticPadTemplate gst_audiobuff2csv_src_template =
 GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
     GST_PAD_ALWAYS,
-    GST_STATIC_CAPS ("audio/x-raw,format=S16LE,rate=[1,max],"
-        "channels=[1,max],layout=interleaved")
+    GST_STATIC_CAPS ("ANY")
     );
 
 static GstStaticPadTemplate gst_audiobuff2csv_sink_template =
@@ -98,9 +97,7 @@ gst_audiobuff2csv_set_property (GObject * object, guint property_id,
     const GValue * value, GParamSpec * pspec)
 {
   GstAudiobuff2csv *audiobuff2csv = GST_AUDIOBUFF2CSV (object);
-
   GST_DEBUG_OBJECT (audiobuff2csv, "set_property");
-
   switch (property_id) {
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -113,9 +110,7 @@ gst_audiobuff2csv_get_property (GObject * object, guint property_id,
     GValue * value, GParamSpec * pspec)
 {
   GstAudiobuff2csv *audiobuff2csv = GST_AUDIOBUFF2CSV (object);
-
   GST_DEBUG_OBJECT (audiobuff2csv, "get_property");
-
   switch (property_id) {
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -127,11 +122,7 @@ void
 gst_audiobuff2csv_dispose (GObject * object)
 {
   GstAudiobuff2csv *audiobuff2csv = GST_AUDIOBUFF2CSV (object);
-
   GST_DEBUG_OBJECT (audiobuff2csv, "dispose");
-
-  /* clean up as possible.  may be called multiple times */
-
   G_OBJECT_CLASS (gst_audiobuff2csv_parent_class)->dispose (object);
 }
 
@@ -139,11 +130,7 @@ void
 gst_audiobuff2csv_finalize (GObject * object)
 {
   GstAudiobuff2csv *audiobuff2csv = GST_AUDIOBUFF2CSV (object);
-
   GST_DEBUG_OBJECT (audiobuff2csv, "finalize");
-
-  /* clean up object here */
-
   G_OBJECT_CLASS (gst_audiobuff2csv_parent_class)->finalize (object);
 }
 
@@ -152,7 +139,6 @@ gst_audiobuff2csv_setup (GstAudioFilter * filter, const GstAudioInfo * info)
 {
   GstAudiobuff2csv *audiobuff2csv = GST_AUDIOBUFF2CSV (filter);
   GST_DEBUG_OBJECT (audiobuff2csv, "setup");
-  
   audiobuff2csv->audioinfo = gst_audio_info_copy(info);
 
   return TRUE;
@@ -166,17 +152,25 @@ gst_audiobuff2csv_transform (GstBaseTransform * trans, GstBuffer * inbuf,
   GstAudiobuff2csv *audiobuff2csv = GST_AUDIOBUFF2CSV (trans);
   GST_DEBUG_OBJECT (audiobuff2csv, "transform");
   
+  /* Mapping of GstBuffer to GstGstAudioBuffer */
   GstAudioBuffer audiobuffer;  
-  gst_audio_buffer_map(&audiobuffer, audiobuff2csv->audioinfo, inbuf, GST_MAP_READWRITE);  
+  gst_audio_buffer_map(&audiobuffer, audiobuff2csv->audioinfo, inbuf, GST_MAP_READWRITE);
+
   gsize n_samples = audiobuffer.n_samples;
-  
   gint timestamp =  GST_BUFFER_TIMESTAMP(inbuf);
   gint rate = GST_AUDIO_INFO_RATE(audiobuff2csv->audioinfo);
   gint channels = GST_AUDIO_INFO_CHANNELS(audiobuff2csv->audioinfo);
-
-  GST_WARNING_OBJECT (audiobuff2csv, "audio buffer : timestamp %d, rate %d, channels %d, n_samples %ld", timestamp, rate, channels, n_samples);
   
   gst_audio_buffer_unmap(&audiobuffer);
+
+  GST_WARNING_OBJECT (audiobuff2csv, "audio buffer : timestamp %d, rate %d, channels %d, n_samples %ld", timestamp, rate, channels, n_samples);
+
+  GstMapInfo mapout;
+  gst_buffer_map (outbuf, &mapout, GST_MAP_WRITE);
+  /* clean up the output audio data and put the new data isntead */
+  memset (mapout.data, 0x00, mapout.size);
+  snprintf((char*)mapout.data, mapout.size, "timestamp=%d, rate=%d, channels=%d, n_samples=%ld \n", timestamp, rate, channels, n_samples);
+  gst_buffer_unmap (inbuf, &mapout);
 
   return GST_FLOW_OK;
 }
@@ -185,8 +179,6 @@ static GstFlowReturn
 gst_audiobuff2csv_transform_ip (GstBaseTransform * trans, GstBuffer * buf)
 {
   GstAudiobuff2csv *audiobuff2csv = GST_AUDIOBUFF2CSV (trans);
-
   GST_DEBUG_OBJECT (audiobuff2csv, "transform_ip");
-
   return GST_FLOW_OK;
 }

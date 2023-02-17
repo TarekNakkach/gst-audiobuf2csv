@@ -1,5 +1,3 @@
 #!/bin/bash
 
-DEBUG_LEVEL=$1
-
-GST_DEBUG=$DEBUG_LEVEL gst-launch-1.0  audiotestsrc  ! audiobuff2csv ! autoaudiosink
+GST_DEBUG=$3 gst-launch-1.0  audiotestsrc num-buffers=$2 ! audiobuff2csv ! filesink location=$1

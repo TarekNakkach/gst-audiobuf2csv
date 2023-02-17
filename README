@@ -9,7 +9,6 @@ plugins can be installed locally by using "$HOME" as prefix:
 
 Usage:
 
-./tools/gstaudiobuff2csv.sh <DEBUG_LEVEL>
-  DEBUG_LEVEL : GST_DEBUG level
+./tools/gstaudiobuff2csv.sh <OUTPUT_FILE_PATH.csv> <NUMBER_OF_BUFFERS> <GST_DEBUG_LEVEL (0 or empty to disable debug)>
 
 
